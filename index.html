@@ -2,14 +2,14 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Roteiro de Entregas</title>
+  <title>Roteiro do Planejamento</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
       font-family: Arial;
       margin: 0;
-      background: linear-gradient(180deg, #ff6a00, #ff8c42);
+      background: #f5f5f5;
     }
 
     header {
@@ -27,35 +27,64 @@
     input {
       width: 100%;
       padding: 14px;
-      border-radius: 12px;
+      border-radius: 10px;
       border: none;
       margin-bottom: 15px;
       font-size: 16px;
     }
 
-    .card {
-      background: white;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 14px;
-    }
-
-    .btn {
+    .btn-rota {
       display:block;
-      margin-top:10px;
-      padding:12px;
+      background:#ff6a00;
+      color:white;
+      padding:14px;
       border-radius:10px;
       text-align:center;
+      margin-bottom:15px;
       font-weight:bold;
       text-decoration:none;
     }
 
-    .maps { background:#ff6a00; color:white; }
-    .rota { background:white; color:#ff6a00; margin-bottom:15px; }
+    .linha {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    .col1 {
+      width: 35%;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .col2 {
+      width: 65%;
+      text-align: right;
+    }
+
+    .endereco {
+      margin-bottom: 6px;
+      color: #555;
+    }
+
+    .btn-maps {
+      background: #ff6a00;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 12px;
+    }
 
     .vazio {
-      color:white;
-      text-align:center;
+      text-align: center;
+      color: #777;
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -74,6 +103,7 @@ const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLptCJKIUDiCVR440Z
 
 let dados = [];
 
+// leitura simples do CSV
 function parseCSV(texto) {
   const linhas = texto.split("\n");
   const headers = linhas[0].split(",");
@@ -125,19 +155,25 @@ function buscar() {
 
   let html = "";
 
+  // botão rota completa
   const rota = montarRota(filtrado);
-  html += `<a href="${rota}" target="_blank" class="btn rota">🚀 Iniciar rota completa</a>`;
+  html += `<a href="${rota}" target="_blank" class="btn-rota">🚀 Iniciar rota completa</a>`;
 
+  // lista clean
   filtrado.forEach(r => {
-    const endereco = `${r["ENDEREÇO"]} ${r["NUMERO"]}, ${r["BAIRRO"]}, ${r["CEP"]}`;
+    const endereco = `${r["ENDEREÇO"]} ${r["NUMERO"]}, ${r["BAIRRO"]}`;
     const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`;
 
     html += `
-      <div class="card">
-        <b>${r["Nome da Loja"]}</b><br>
-        Rota: ${r["Código da sua Rota"]}<br>
-        ${endereco}<br>
-        <a class="btn maps" href="${maps}" target="_blank">📍 Abrir no Maps</a>
+      <div class="linha">
+        <div class="col1">
+          ${r["Nome da Loja"]}
+        </div>
+
+        <div class="col2">
+          <div class="endereco">${endereco}</div>
+          <a class="btn-maps" href="${maps}" target="_blank">📍 Mapa</a>
+        </div>
       </div>
     `;
   });
