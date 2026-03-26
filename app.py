@@ -5,9 +5,6 @@
   <title>Roteiro de Entregas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Biblioteca para ler CSV corretamente -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
   <style>
     body {
       font-family: Arial;
@@ -43,7 +40,7 @@
       border-radius: 14px;
     }
 
-    .btn-maps, .btn-rota {
+    .btn {
       display:block;
       margin-top:10px;
       padding:12px;
@@ -53,16 +50,8 @@
       text-decoration:none;
     }
 
-    .btn-maps {
-      background:#ff6a00;
-      color:white;
-    }
-
-    .btn-rota {
-      background:white;
-      color:#ff6a00;
-      margin-bottom:15px;
-    }
+    .maps { background:#ff6a00; color:white; }
+    .rota { background:white; color:#ff6a00; margin-bottom:15px; }
 
     .vazio {
       color:white;
@@ -85,14 +74,28 @@ const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTLptCJKIUDiCVR440Z
 
 let dados = [];
 
-function carregarDados() {
-  Papa.parse(url, {
-    download: true,
-    header: true,
-    complete: function(results) {
-      dados = results.data;
-    }
+// função simples de CSV (não quebra fácil)
+function parseCSV(texto) {
+  const linhas = texto.split("\n");
+  const headers = linhas[0].split(";"); // 👈 importante: usa ;
+
+  return linhas.slice(1).map(linha => {
+    const colunas = linha.split(";");
+    let obj = {};
+    headers.forEach((h, i) => obj[h.trim()] = colunas[i]);
+    return obj;
   });
+}
+
+async function carregarDados() {
+  try {
+    const res = await fetch(url);
+    const texto = await res.text();
+    dados = parseCSV(texto);
+  } catch (erro) {
+    document.getElementById("resultado").innerHTML =
+      "<p class='vazio'>Erro ao carregar dados</p>";
+  }
 }
 
 function montarRota(lista) {
@@ -128,9 +131,8 @@ function buscar() {
 
   let html = "";
 
-  // botão rota
   const rota = montarRota(filtrado);
-  html += `<a href="${rota}" target="_blank" class="btn-rota">🚀 Iniciar rota completa</a>`;
+  html += `<a href="${rota}" target="_blank" class="btn rota">🚀 Iniciar rota completa</a>`;
 
   filtrado.forEach(r => {
     const endereco = `${r["ENDEREÇO"]} ${r["NUMERO"]}, ${r["BAIRRO"]}, ${r["CEP"]}`;
@@ -141,7 +143,7 @@ function buscar() {
         <b>${r["Nome da Loja"]}</b><br>
         Rota: ${r["Código da sua Rota"]}<br>
         ${endereco}<br>
-        <a class="btn-maps" href="${maps}" target="_blank">📍 Abrir no Maps</a>
+        <a class="btn maps" href="${maps}" target="_blank">📍 Abrir no Maps</a>
       </div>
     `;
   });
