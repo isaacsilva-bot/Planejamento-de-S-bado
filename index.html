@@ -122,7 +122,7 @@ function buscar() {
   const filtrado = dados.filter(d => d["ID do motorista"] === id);
 
   if (filtrado.length === 0) {
-    div.innerHTML = "<p class='vazio'>Nenhum resultado</p>";
+    div.innerHTML = "<p class='vazio'>Você não possui rota neste sábado ou digitou o ID errado. Por favor, verifique novamente. Caso tenha disponibilidade para trabalhar, informe ao seu analista. </p>";
     return;
   }
 
