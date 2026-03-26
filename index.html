@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Roteiro do Planejamento de Sábado</title>
+<title>Roteiro de Entregas</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -74,7 +74,7 @@
 
 <body>
 
-<header>🚚 Endereço de Visitas</header>
+<header>🚚 Roteiro de Planejamento de Sábado</header>
 
 <div class="container">
   <input type="text" id="idMotorista" placeholder="Digite seu ID...">
@@ -126,6 +126,10 @@ function buscar() {
         <tr>
           <th>Loja</th>
           <th>Endereço</th>
+          <th>Nº</th>
+          <th>Bairro</th>
+          <th>CEP</th>
+          <th>Complemento</th>
           <th></th>
         </tr>
       </thead>
@@ -133,13 +137,17 @@ function buscar() {
   `;
 
   filtrado.forEach(r => {
-    const endereco = `${r["ENDEREÇO"]}, ${r["NUMERO"]} - ${r["BAIRRO"]}`;
-    const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`;
+    const enderecoCompleto = `${r["ENDEREÇO"]}, ${r["NUMERO"]} - ${r["BAIRRO"]}`;
+    const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(enderecoCompleto)}`;
 
     html += `
       <tr>
-        <td>${r["Nome da Loja"]}</td>
-        <td>${endereco}</td>
+        <td>${r["Nome da Loja"] || ""}</td>
+        <td>${r["ENDEREÇO"] || ""}</td>
+        <td>${r["NUMERO"] || ""}</td>
+        <td>${r["BAIRRO"] || ""}</td>
+        <td>${r["CEP"] || ""}</td>
+        <td>${r["COMPLEMENTO"] || ""}</td>
         <td>
           <a class="btn-maps" href="${maps}" target="_blank">📍</a>
         </td>
